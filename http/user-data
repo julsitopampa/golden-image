@@ -1,0 +1,67 @@
+#cloud-config
+disk_setup:
+  /dev/sda:
+    table_type: gpt
+    layout: true
+    overwrite: true
+
+fs_setup:
+  - label: EFI
+    filesystem: vfat
+    device: /dev/sda1
+  - label: rootfs
+    filesystem: ext4
+    device: /dev/vg0/lv_root
+  - label: home
+    filesystem: ext4
+    device: /dev/vg0/lv_home
+  - label: usr
+    filesystem: ext4
+    device: /dev/vg0/lv_usr
+  - label: tmp
+    filesystem: ext4
+    device: /dev/vg0/lv_tmp
+  - label: var
+    filesystem: ext4
+    device: /dev/vg0/lv_var
+  - label: vartmp
+    filesystem: ext4
+    device: /dev/vg0/lv_vartmp
+  - label: varlog
+    filesystem: ext4
+    device: /dev/vg0/lv_varlog
+  - label: varlogaudit
+    filesystem: ext4
+    device: /dev/vg0/lv_varlogaudit
+
+# create partitions
+bootcmd:
+  # Create partitions: 512M boot + rest for LVM PV
+  - parted /dev/sda --script mklabel gpt
+  - parted /dev/sda --script mkpart ESP fat32 1MiB 513MiB
+  - parted /dev/sda --script set 1 boot on
+  - parted /dev/sda --script set 1 esp on
+  - parted /dev/sda --script mkpart primary ext4 513MiB 100%
+  # Create PV/VG/LVs for CIS layout
+  - pvcreate /dev/sda2
+  - vgcreate vg0 /dev/sda2
+  - lvcreate -L 20G -n lv_root vg0
+  - lvcreate -L 10G -n lv_home vg0
+  - lvcreate -L 6G  -n lv_usr vg0
+  - lvcreate -L 4G  -n lv_tmp vg0
+  - lvcreate -L 8G  -n lv_var vg0
+  - lvcreate -L 2G  -n lv_vartmp vg0
+  - lvcreate -L 4G  -n lv_varlog vg0
+  - lvcreate -L 2G  -n lv_varlogaudit vg0
+
+mounts:
+  # EFI system partition
+  - [ /dev/sda1, /boot/efi, "vfat", "umask=0077", "0", "1" ]
+  - [ /dev/vg0/lv_root, /, "ext4", "defaults", "0", "1" ]
+  - [ /dev/vg0/lv_home, /home, "ext4", "defaults,nodev", "0", "2" ]
+  - [ /dev/vg0/lv_usr, /usr, "ext4", "defaults,nodev", "0", "2" ]
+  - [ /dev/vg0/lv_tmp, /tmp, "ext4", "defaults,nodev,nosuid,noexec", "0", "2" ]
+  - [ /dev/vg0/lv_var, /var, "ext4", "defaults", "0", "2" ]
+  - [ /dev/vg0/lv_vartmp, /var/tmp, "ext4", "defaults,nodev,nosuid,noexec", "0", "2" ]
+  - [ /dev/vg0/lv_varlog, /var/log, "ext4", "defaults,nodev,nosuid,noexec", "0", "2" ]
+  - [ /dev/vg0/lv_varlogaudit, /var/log/audit, "ext4", "defaults,nodev,nosuid,noexec", "0", "2" ]
