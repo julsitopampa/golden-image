@@ -65,3 +65,6 @@ mounts:
   - [ /dev/vg0/lv_vartmp, /var/tmp, "ext4", "defaults,nodev,nosuid,noexec", "0", "2" ]
   - [ /dev/vg0/lv_varlog, /var/log, "ext4", "defaults,nodev,nosuid,noexec", "0", "2" ]
   - [ /dev/vg0/lv_varlogaudit, /var/log/audit, "ext4", "defaults,nodev,nosuid,noexec", "0", "2" ]
+
+packages:
+  - qemu-guest-agent

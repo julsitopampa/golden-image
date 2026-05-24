@@ -8,3 +8,4 @@ secrets*
 
 # For built boxes
 *.box
+downloaded_iso_path/
