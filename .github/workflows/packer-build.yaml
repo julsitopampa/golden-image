@@ -1,0 +1,70 @@
+name: Packer Build
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "**.pkr.hcl"
+      - "**.pkrvars.hcl"
+      - "http/**"
+  pull_request:
+    branches: [main]
+    paths:
+      - "**.pkr.hcl"
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+env:
+  PACKER_VERSION: "1.15.3"
+
+jobs:
+  validate:
+    name: Validate Packer Templates
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+      - name: Setup Packer
+        uses: hashicorp/setup-packer@v3
+        with:
+          version: ${{ env.PACKER_VERSION }}
+
+      - name: Initialize Packer
+        run: packer init .
+
+      - name: Format check
+        run: packer fmt -check -diff .
+
+      - name: Validate templates
+        env:
+          PKR_VAR_proxmox_api_url: "https://stub:8006"
+          PKR_VAR_proxmox_api_token_id: "stub@pve!stub"
+          PKR_VAR_proxmox_api_token_secret: "stub"
+        run: packer validate .
+
+  build:
+    name: Build Images
+    runs-on: self-hosted-arc
+    environment: prod
+    needs: validate
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Setup Packer
+        uses: hashicorp/setup-packer@v3
+        with:
+          version: ${{ env.PACKER_VERSION }}
+
+      - name: Initialize Packer
+        run: packer init .
+
+      - name: Build images
+        env:
+          PKR_VAR_proxmox_api_url: ${{ secrets.PROXMOX_API_URL }}
+          PKR_VAR_proxmox_api_token_id: ${{ secrets.PROXMOX_API_TOKEN_ID }}
+          PKR_VAR_proxmox_api_token_secret: ${{ secrets.PROXMOX_API_TOKEN_SECRET }}
+        run: packer build .
