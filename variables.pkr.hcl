@@ -13,20 +13,6 @@ variable "proxmox_api_token_secret" {
   sensitive = true
 }
 
-variable "provisioner_password_hash" {
-  type        = string
-  description = <<-EOT
-    SHA-512 crypt hash of the provisioner user password.
-    Generate with: openssl passwd -6 'yourpassword'
-  EOT
-  sensitive   = true
-}
-
-variable "provisioner_ssh_pubkey" {
-  type      = string
-  sensitive = true
-}
-
 variable "cores" {
   type    = number
   default = 4
