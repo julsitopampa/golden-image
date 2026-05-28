@@ -5,8 +5,6 @@ packer {
       version = "~> 1"
       source  = "github.com/hashicorp/proxmox"
     }
-
-
   }
 }
 
@@ -64,7 +62,7 @@ source "proxmox-iso" "debian" {
     " auto=true priority=critical",
     " locale=fr_FR.UTF-8",
     " keymap=fr",
-    " url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed.cfg",
+    " preseed/file=/cdrom/preseed.cfg",
     " interface=auto",
     " netcfg/get_hostname=debian-golden",
     " netcfg/get_domain=localdomain",
@@ -129,13 +127,14 @@ source "proxmox-iso" "debian" {
 
   insecure_skip_tls_verify = true
 
-  http_content = {
-    "/preseed.cfg" = templatefile("${path.root}/http/preseed.cfg.tpl", local.preseed_vars)
+  additional_iso_files {
+    cd_content = {
+      "/cdrom/preseed.cfg" = templatefile("${path.root}/cdrom/preseed.cfg.tpl", local.preseed_vars)
+    }
+    iso_storage_pool = "local"
+    cd_label         = "PRESEED"
+    unmount          = true
   }
-  http_bind_address = var.http_bind_address
-  http_port_min     = var.http_port_min
-  http_port_max     = var.http_port_max
-
 
   node        = "pve1"
   username    = "${var.proxmox_api_token_id}"
