@@ -12,8 +12,8 @@ packer {
 
 locals {
 
-  disk_size_numeral = substr(var.disk_size,0,length(var.disk_size) - 1)
-  lvm_vg_mb = (local.disk_size_numeral * 1024) - var.boot_mb
+  disk_size_numeral = substr(var.disk_size, 0, length(var.disk_size) - 1)
+  lvm_vg_mb         = (local.disk_size_numeral * 1024) - var.boot_mb
 
   lv_root_mb   = floor(local.lvm_vg_mb * var.lv_root_pct / 100)
   lv_tmp_mb    = floor(local.lvm_vg_mb * var.lv_tmp_pct / 100)
@@ -51,30 +51,30 @@ source "proxmox-iso" "debian" {
   }
 
   boot_command = [
-      # Select the first menu entry ("Install") — it is already highlighted by default.
-  # Press 'e' to enter GRUB edit mode for that entry.
-  "e<wait2>",
+    # Select the first menu entry ("Install") — it is already highlighted by default.
+    # Press 'e' to enter GRUB edit mode for that entry.
+    "e<wait2>",
 
-  # The GRUB edit screen shows the full menuentry stanzas.
-  # The cursor lands at the top of the entry. We need to reach the 'linux' line.
-  # The linux line is typically the 3rd line of the entry.
-  # <down> moves one line, <end> jumps to end of that line.
-  "<down><down><down><end><wait>",
+    # The GRUB edit screen shows the full menuentry stanzas.
+    # The cursor lands at the top of the entry. We need to reach the 'linux' line.
+    # The linux line is typically the 3rd line of the entry.
+    # <down> moves one line, <end> jumps to end of that line.
+    "<down><down><down><end><wait>",
 
-  # Append all kernel parameters after the existing line content.
-  # A leading space is mandatory — without it the last existing parameter
-  # and the first new one get concatenated into one broken token.
-  " auto=true priority=critical",
-  " locale=fr_FR.UTF-8",
-  " keymap=fr",
-  " url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed.cfg",
-  " interface=auto",
-  " netcfg/get_hostname=debian-golden",
-  " netcfg/get_domain=localdomain",
-  " DEBIAN_FRONTEND=text",
+    # Append all kernel parameters after the existing line content.
+    # A leading space is mandatory — without it the last existing parameter
+    # and the first new one get concatenated into one broken token.
+    " auto=true priority=critical",
+    " locale=fr_FR.UTF-8",
+    " keymap=fr",
+    " url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed.cfg",
+    " interface=auto",
+    " netcfg/get_hostname=debian-golden",
+    " netcfg/get_domain=localdomain",
+    " DEBIAN_FRONTEND=text",
 
-  # <ctrl-x> or <F10> boots the modified entry.
-  "<leftCtrlOn>x<leftCtrlOff>"
+    # <ctrl-x> or <F10> boots the modified entry.
+    "<leftCtrlOn>x<leftCtrlOff>"
   ]
 
   boot_wait = "10s"
