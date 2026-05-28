@@ -7,10 +7,12 @@ on:
       - "**.pkr.hcl"
       - "**.pkrvars.hcl"
       - "http/**"
+      - ".github/workflows/*"
   pull_request:
     branches: [main]
     paths:
       - "**.pkr.hcl"
+      - ".github/workflows/*"
 
 concurrency:
   group: ${{ github.workflow }}
