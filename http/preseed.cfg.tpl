@@ -131,7 +131,7 @@ d-i passwd/root-password-crypted                   password !
 
 d-i passwd/user-fullname                            string   Provisioner
 d-i passwd/username                                 string   provisioner
-d-i passwd/user-password-crypted                   password ${provisioner_password_hash}
+d-i passwd/user-password                        password debian
 d-i passwd/user-default-groups                     string   sudo
 d-i passwd/user-uid                                 string   1001
 
@@ -162,14 +162,6 @@ d-i preseed/late_command string \
         # (a) passwordless sudo \
         echo "provisioner ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/provisioner; \
         chmod 0440 /etc/sudoers.d/provisioner; \
-        \
-        # (b) SSH authorized_key \
-        mkdir -p /home/provisioner/.ssh; \
-        chmod 700 /home/provisioner/.ssh; \
-        echo "${provisioner_ssh_pubkey}" \
-            > /home/provisioner/.ssh/authorized_keys; \
-        chmod 600 /home/provisioner/.ssh/authorized_keys; \
-        chown -R provisioner:provisioner /home/provisioner/.ssh; \
         \
         # (c) SSH daemon hardening \
         sed -i "s|^#*PermitRootLogin.*|PermitRootLogin no|"                /etc/ssh/sshd_config; \

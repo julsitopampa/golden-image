@@ -25,9 +25,6 @@ locals {
   lv_swap_mb   = floor(local.lvm_vg_mb * var.lv_swap_pct / 100)
 
   preseed_vars = {
-    provisioner_password_hash = var.provisioner_password_hash
-    provisioner_ssh_pubkey    = var.provisioner_ssh_pubkey
-
     boot_mb      = var.boot_mb
     lv_root_mb   = local.lv_root_mb
     lv_tmp_mb    = local.lv_tmp_mb
@@ -148,9 +145,9 @@ source "proxmox-iso" "debian" {
   vm_id       = 9999
   tags        = "template"
 
-  ssh_private_key_file = "~/.ssh/id_ed25519"
-  ssh_timeout          = "15m"
-  ssh_username         = "provisioner"
+  ssh_timeout  = "15m"
+  ssh_username = "provisioner"
+  ssh_password = "debian"
 
   template_description = "Debian 13.1, generated on ${timestamp()}"
   template_name        = "debian-golden"
