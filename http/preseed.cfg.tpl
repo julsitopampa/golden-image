@@ -132,6 +132,7 @@ d-i passwd/root-password-crypted                   password !
 d-i passwd/user-fullname                            string   Provisioner
 d-i passwd/username                                 string   provisioner
 d-i passwd/user-password                        password debian
+d-i passwd/user-password-again                  password debian
 d-i passwd/user-default-groups                     string   sudo
 d-i passwd/user-uid                                 string   1001
 

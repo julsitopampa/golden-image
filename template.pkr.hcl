@@ -9,7 +9,6 @@ packer {
 }
 
 locals {
-
   disk_size_numeral = substr(var.disk_size, 0, length(var.disk_size) - 1)
   lvm_vg_mb         = (local.disk_size_numeral * 1024) - var.boot_mb
 
@@ -37,12 +36,11 @@ locals {
 
 source "proxmox-iso" "debian" {
   boot_iso {
-    iso_urls         = ["https://ftp.crifo.org/debian-cd/current/amd64/iso-cd/debian-13.5.0-amd64-netinst.iso", "https://ftp.crifo.org/debian-cd/current/amd64/iso-cd/debian-13.5.0-amd64-netinst.iso"]
+    iso_urls         = ["https://ftp.crifo.org/debian-cd/current/amd64/iso-cd/debian-13.5.0-amd64-netinst.iso"]
     iso_checksum     = "file:https://ftp.crifo.org/debian-cd/current/amd64/iso-cd/SHA512SUMS"
-    type             = "scsi"
+    type             = "ide"
     unmount          = true
     iso_storage_pool = "local"
-
   }
 
   boot_command = [
@@ -62,7 +60,7 @@ source "proxmox-iso" "debian" {
     " auto=true priority=critical",
     " locale=fr_FR.UTF-8",
     " keymap=fr",
-    " preseed/file=/cdrom/preseed.cfg",
+    " url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed.cfg",
     " interface=auto",
     " netcfg/get_hostname=debian-golden",
     " netcfg/get_domain=localdomain",
@@ -127,14 +125,12 @@ source "proxmox-iso" "debian" {
 
   insecure_skip_tls_verify = true
 
-  additional_iso_files {
-    cd_content = {
-      "/cdrom/preseed.cfg" = templatefile("${path.root}/cdrom/preseed.cfg.tpl", local.preseed_vars)
-    }
-    iso_storage_pool = "local"
-    cd_label         = "PRESEED"
-    unmount          = true
+  http_content = {
+    "/preseed.cfg" = templatefile("${path.root}/http/preseed.cfg.tpl", local.preseed_vars)
   }
+  http_bind_address = var.http_bind_address
+  http_port_min     = var.http_port_min
+  http_port_max     = var.http_port_max
 
   node        = "pve1"
   username    = "${var.proxmox_api_token_id}"
