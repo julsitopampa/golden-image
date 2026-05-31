@@ -129,13 +129,13 @@ variable "lv_swap_pct" {
 
 variable "http_port_min" {
   type        = number
-  default     = 8115
+  default     = 8100
   description = "Lower bound of the port range for Packer's built-in HTTP server."
 }
 
 variable "http_port_max" {
   type        = number
-  default     = 8115
+  default     = 8200
   description = "Upper bound of the port range for Packer's built-in HTTP server."
 }
 
