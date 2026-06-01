@@ -24,22 +24,35 @@ d-i time/zone                                       string   Europe/Paris
 d-i clock-setup/ntp                                 boolean  true
 
 # 5. DISK PARTITIONING
+d-i partman-auto/disk string /dev/sda
 d-i partman-auto/method                             string   lvm
+d-i partman-lvm/device_remove_lvm boolean true
+d-i partman-lvm/device_remove_lvm_span boolean true
+d-i partman-md/device_remove_md boolean true
+d-i partman-auto/purge_lvm_from_device boolean true
 d-i partman-auto-lvm/new_vg_name                    string   vg0
-
-d-i partman-lvm/device_remove_lvm                   boolean  true
-d-i partman-md/device_remove_md                     boolean  true
 d-i partman-lvm/confirm                             boolean  true
-d-i partman-lvm/confirm_nooverwrite                 boolean  true
+d-i partman/alignment string "optimal"
 
 d-i partman-auto/expert_recipe string                                                        \
-    sys-lvm ::                                                                               \
-        ${boot_mb} ${boot_mb} ${boot_mb} ext4                                                \
+    boot-root ::                                    \
+        ${efi_mb} ${efi_mb} ${efi_mb} fat32         \
+            $primary{ }                             \
+            method{ efi }                           \
+            format{ } .                             \
+        .                                                                               \
+        ${boot_mb} ${boot_mb} ${boot_mb} ext3                                                \
             $primary{ } $bootable{ }                                                         \
             method{ format } format{ }                                                       \
-            use_filesystem{ } filesystem{ ext4 }                                             \
+            use_filesystem{ } filesystem{ ext3 }                                             \
             mountpoint{ /boot }                                                              \
-        .                                                                                    \
+        .        
+        4000 100 -1 ext4                                      \
+            $defaultignore{ }                                 \
+            $primary{}                                        \
+            method{ lvm } format{ }                           \
+            vg_name{ vg0 }
+        .                                                                                      \
         ${lv_root_mb} ${lv_root_mb} ${lv_root_mb} ext4                                      \
             $lvmok{ } lv_name{ root }                                                        \
             in_vg{ vg0 }                                                                     \
@@ -109,6 +122,7 @@ d-i partman-auto/expert_recipe string                                           
             method{ swap } format{ }                                                         \
         .
 
+d-i partman-lvm/confirm_nooverwrite                 boolean  true
 d-i partman-partitioning/confirm_write_new_label    boolean  true
 d-i partman/choose_partition                        select   finish
 d-i partman/confirm                                 boolean  true

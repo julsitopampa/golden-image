@@ -10,7 +10,7 @@ packer {
 
 locals {
   disk_size_numeral = substr(var.disk_size, 0, length(var.disk_size) - 1)
-  lvm_vg_mb         = (local.disk_size_numeral * 1024) - var.boot_mb
+  lvm_vg_mb         = (local.disk_size_numeral * 1024) - var.boot_mb - var.efi_mb
 
   lv_root_mb   = floor(local.lvm_vg_mb * var.lv_root_pct / 100)
   lv_tmp_mb    = floor(local.lvm_vg_mb * var.lv_tmp_pct / 100)
@@ -22,6 +22,7 @@ locals {
   lv_swap_mb   = floor(local.lvm_vg_mb * var.lv_swap_pct / 100)
 
   preseed_vars = {
+    efi_mb       = var.efi_mb
     boot_mb      = var.boot_mb
     lv_root_mb   = local.lv_root_mb
     lv_tmp_mb    = local.lv_tmp_mb

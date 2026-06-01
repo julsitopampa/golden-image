@@ -39,6 +39,12 @@ variable "boot_mb" {
   description = "/boot partition size in MB. Lives outside LVM as a primary partition."
 }
 
+variable "efi_mb" {
+  type        = number
+  default     = 538
+  description = "EFI system partition size in MB. Lives outside LVM as a primary GPT partition."
+}
+
 variable "lv_root_pct" {
   type        = number
   default     = 20.5
