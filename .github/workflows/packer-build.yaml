@@ -68,4 +68,4 @@ jobs:
       - name: Build images
         env:
           PKR_VAR_proxmox_api_token_secret: ${{ secrets.PROXMOX_API_TOKEN_SECRET }}
-        run: packer build .
+        run: PACKER_LOG=1 packer build -force .
