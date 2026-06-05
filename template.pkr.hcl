@@ -100,7 +100,7 @@ source "proxmox-iso" "debian" {
 
   insecure_skip_tls_verify = true
 
-  http_directory = "http"
+  http_directory    = "http"
   http_bind_address = var.http_bind_address
   http_port_min     = var.http_port_min
   http_port_max     = var.http_port_max
