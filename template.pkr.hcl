@@ -8,33 +8,6 @@ packer {
   }
 }
 
-locals {
-  disk_size_numeral = substr(var.disk_size, 0, length(var.disk_size) - 1)
-  lvm_vg_mb         = (local.disk_size_numeral * 1024) - var.boot_mb - var.efi_mb
-
-  lv_root_mb   = floor(local.lvm_vg_mb * var.lv_root_pct / 100)
-  lv_tmp_mb    = floor(local.lvm_vg_mb * var.lv_tmp_pct / 100)
-  lv_var_mb    = floor(local.lvm_vg_mb * var.lv_var_pct / 100)
-  lv_vartmp_mb = floor(local.lvm_vg_mb * var.lv_vartmp_pct / 100)
-  lv_varlog_mb = floor(local.lvm_vg_mb * var.lv_varlog_pct / 100)
-  lv_audit_mb  = floor(local.lvm_vg_mb * var.lv_audit_pct / 100)
-  lv_home_mb   = floor(local.lvm_vg_mb * var.lv_home_pct / 100)
-  lv_swap_mb   = floor(local.lvm_vg_mb * var.lv_swap_pct / 100)
-
-  preseed_vars = {
-    efi_mb       = var.efi_mb
-    boot_mb      = var.boot_mb
-    lv_root_mb   = local.lv_root_mb
-    lv_tmp_mb    = local.lv_tmp_mb
-    lv_var_mb    = local.lv_var_mb
-    lv_vartmp_mb = local.lv_vartmp_mb
-    lv_varlog_mb = local.lv_varlog_mb
-    lv_audit_mb  = local.lv_audit_mb
-    lv_home_mb   = local.lv_home_mb
-    lv_swap_mb   = local.lv_swap_mb
-  }
-}
-
 source "proxmox-iso" "debian" {
   boot_iso {
     iso_urls         = ["https://ftp.crifo.org/debian-cd/current/amd64/iso-cd/debian-13.5.0-amd64-netinst.iso"]
@@ -122,13 +95,12 @@ source "proxmox-iso" "debian" {
     model         = "virtio"
     firewall      = false
     packet_queues = "${var.cores}"
+    mac_address   = "BC:24:11:27:BF:E6"
   }
 
   insecure_skip_tls_verify = true
 
-  http_content = {
-    "/preseed.cfg" = templatefile("${path.root}/http/preseed.cfg.tpl", local.preseed_vars)
-  }
+  http_directory = "http"
   http_bind_address = var.http_bind_address
   http_port_min     = var.http_port_min
   http_port_max     = var.http_port_max
