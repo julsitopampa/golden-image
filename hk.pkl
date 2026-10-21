@@ -1,0 +1,34 @@
+amends "package://github.com/jdx/hk/releases/download/v1.57.0/hk@1.57.0#/Config.pkl"
+import "package://github.com/jdx/hk/releases/download/v1.57.0/hk@1.57.0#/Builtins.pkl"
+
+local linters = new Mapping<String, Step> {
+    ["betterleaks"] {
+        check = "betterleaks git --pre-commit --redact --staged --verbose"
+    }
+    ["packer_fmt"] {
+        glob = List("*.pkr.hcl", "*.pkrvars.hcl")
+        check = "packer fmt -check -diff ."
+        fix = "packer fmt ."
+    }
+    ["packer_validate"] {
+        glob = List("*.pkr.hcl", "*.pkrvars.hcl")
+        check = "packer init . && PKR_VAR_proxmox_api_url=https://stub:8006 PKR_VAR_proxmox_api_token_id=stub@pve!stub PKR_VAR_proxmox_api_token_secret=stub packer validate -syntax-only ."
+    }
+    ["actionlint"] = Builtins.actionlint
+    ["yamlfmt"] = Builtins.yamlfmt
+}
+
+hooks {
+    ["pre-commit"] {
+        fix = true
+        stash = "git"
+        steps = linters
+    }
+    ["fix"] {
+        fix = true
+        steps = linters
+    }
+    ["check"] {
+        steps = linters
+    }
+}
