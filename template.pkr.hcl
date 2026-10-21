@@ -16,7 +16,6 @@ source "proxmox-iso" "debian" {
   boot_iso {
     iso_urls         = ["https://cdimage.debian.org/debian-cd/current/amd64/iso-cd/debian-13.7.0-amd64-netinst.iso"]
     iso_checksum     = "file:https://cdimage.debian.org/debian-cd/current/amd64/iso-cd/SHA256SUMS"
-    iso_checksum_type = "sha256"
     type             = "ide"
     unmount          = true
     iso_storage_pool = "local"
