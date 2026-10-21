@@ -96,7 +96,7 @@ source "proxmox-iso" "debian" {
     model         = "virtio"
     firewall      = false
     packet_queues = "${var.cores}"
-    mac_address   = "BC:24:11:27:BF:E6"
+    mac_address   = "${var.mac_address}"
   }
 
   insecure_skip_tls_verify = true
@@ -124,4 +124,16 @@ source "proxmox-iso" "debian" {
 
 build {
   sources = ["source.proxmox-iso.debian"]
+
+  provisioner "shell" {
+    execute_command = "echo '${build.Password}' | {{ .Vars }} sudo -S -E bash '{{ .Path }}'"
+    inline = [
+      "echo '=== Cleaning machine-id and DHCP leases for template cloning ==='",
+      "truncate -s 0 /etc/machine-id",
+      "rm -f /var/lib/dbus/machine-id",
+      "ln -sf /etc/machine-id /var/lib/dbus/machine-id",
+      "rm -rf /var/lib/dhcp/* /var/lib/NetworkManager/*",
+      "sync"
+    ]
+  }
 }
