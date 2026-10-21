@@ -3,5 +3,5 @@
 [X] Gestion comunicator : 
     - provision d'un compte provisioner et mdp générique avec preseed.cfg
     - utiliser par packer ssh_username ; ssh_password
-[] Console keys EN instead of FR
+[X] Console keys EN instead of FR
 [] MAC / DHCP handling
