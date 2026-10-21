@@ -1,0 +1,26 @@
+---
+- name: Harden Debian 13 Golden Image (CIS Level 1 Server)
+  hosts: all
+  become: true
+  vars:
+    # Target CIS Level 1 Server only
+    deb13cis_level_1: true
+    deb13cis_level_2: false
+
+    # Keep root login locked via password (preseed sets root password to '!')
+    deb13cis_rule_5_4_2_4: false
+
+    # Allow provisioner account to retain passwordless sudo and SSH access for downstream Terraform provisioning
+    deb13cis_sudoers_exclude_nopasswd_list:
+      - admin
+      - provisioner
+    deb13cis_sshd_limited: true
+    deb13cis_sshd_allow_users: "provisioner"
+
+    # Skip reboot during Ansible run; Packer stops and converts the VM cleanly after sysprep
+    skip_reboot: true
+
+  roles:
+    - role: DEBIAN13-CIS
+      tags:
+        - level1-server

@@ -9,3 +9,8 @@ secrets*
 # For built boxes
 *.box
 downloaded_iso_path/
+
+# Ansible Galaxy roles and collections
+ansible/roles/
+ansible/collections/
+
