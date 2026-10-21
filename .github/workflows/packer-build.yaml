@@ -7,11 +7,14 @@ on:
       - "**.pkr.hcl"
       - "**.pkrvars.hcl"
       - "http/**"
+      - "ansible/**"
       - ".github/workflows/*"
   pull_request:
     branches: [main]
     paths:
       - "**.pkr.hcl"
+      - "http/**"
+      - "ansible/**"
       - ".github/workflows/*"
 
 concurrency:
@@ -63,6 +66,11 @@ jobs:
 
       - name: Initialize Packer
         run: packer init .
+
+      - name: Install Ansible Galaxy dependencies
+        run: |
+          ansible-galaxy role install -r ansible/requirements.yml -p ansible/roles
+          ansible-galaxy collection install -r ansible/requirements.yml
 
       - name: Build images
         env:
