@@ -5,6 +5,10 @@ packer {
       version = "~> 1"
       source  = "github.com/hashicorp/proxmox"
     }
+    ansible = {
+      version = "~> 1"
+      source  = "github.com/hashicorp/ansible"
+    }
   }
 }
 
@@ -12,7 +16,6 @@ source "proxmox-iso" "debian" {
   boot_iso {
     iso_urls         = ["https://cdimage.debian.org/debian-cd/current/amd64/iso-cd/debian-13.7.0-amd64-netinst.iso"]
     iso_checksum     = "file:https://cdimage.debian.org/debian-cd/current/amd64/iso-cd/SHA256SUMS"
-    iso_checksum_type = "sha256"
     type             = "ide"
     unmount          = true
     iso_storage_pool = "local"
@@ -125,6 +128,20 @@ source "proxmox-iso" "debian" {
 build {
   sources = ["source.proxmox-iso.debian"]
 
+  provisioner "ansible" {
+    playbook_file = "${path.root}/ansible/playbook.yml"
+    user          = "provisioner"
+    use_proxy     = false
+    extra_arguments = [
+      "--tags", "level1-server",
+      "--extra-vars", "ansible_ssh_pass=${build.Password} ansible_become_pass=${build.Password}"
+    ]
+    ansible_env_vars = [
+      "ANSIBLE_HOST_KEY_CHECKING=False",
+      "ANSIBLE_ROLES_PATH=${path.root}/ansible/roles"
+    ]
+  }
+
   provisioner "shell" {
     execute_command = "echo '${build.Password}' | {{ .Vars }} sudo -S -E bash '{{ .Path }}'"
     inline = [
@@ -133,6 +150,8 @@ build {
       "rm -f /var/lib/dbus/machine-id",
       "ln -sf /etc/machine-id /var/lib/dbus/machine-id",
       "rm -rf /var/lib/dhcp/* /var/lib/NetworkManager/*",
+      "apt-get clean",
+      "rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*",
       "sync"
     ]
   }
