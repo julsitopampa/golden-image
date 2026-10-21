@@ -4,4 +4,4 @@
     - provision d'un compte provisioner et mdp générique avec preseed.cfg
     - utiliser par packer ssh_username ; ssh_password
 [X] Console keys EN instead of FR
-[] MAC / DHCP handling
+[X] MAC / DHCP handling

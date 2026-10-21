@@ -51,4 +51,10 @@ variable "http_bind_address" {
   description = "Address Packer's HTTP server binds to. Must be reachable from the Proxmox VM network."
 }
 
+variable "mac_address" {
+  type        = string
+  default     = "BC:24:11:27:BF:E6"
+  description = "Static MAC address used during Packer build for ISP DHCP reservation."
+}
+
 
