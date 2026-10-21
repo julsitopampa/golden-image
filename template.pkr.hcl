@@ -10,8 +10,8 @@ packer {
 
 source "proxmox-iso" "debian" {
   boot_iso {
-    iso_urls         = ["https://ftp.crifo.org/debian-cd/current/amd64/iso-cd/debian-13.5.0-amd64-netinst.iso"]
-    iso_checksum     = "file:https://ftp.crifo.org/debian-cd/current/amd64/iso-cd/SHA512SUMS"
+    iso_urls         = ["https://cdimage.debian.org/debian-cd/current/amd64/iso-cd/debian-13.5.0-amd64-netinst.iso"]
+    iso_checksum     = "file:https://cdimage.debian.org/debian-cd/current/amd64/iso-cd/SHA512SUMS"
     type             = "ide"
     unmount          = true
     iso_storage_pool = "local"
