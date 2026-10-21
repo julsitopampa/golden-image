@@ -5,3 +5,4 @@
     - utiliser par packer ssh_username ; ssh_password
 [X] Console keys EN instead of FR
 [X] MAC / DHCP handling
+[X] Hardening via Ansible Lockdown (DEBIAN13-CIS Level 1 Server)
