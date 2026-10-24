@@ -16,7 +16,11 @@ github_attestations = true
 
 [tools]
 actionlint = "latest"
+ansible = { version = "latest", pipx_args = "--include-deps", uvx = true }
 betterleaks = "latest"
 hk = "latest"
+"npm:pin-github-action" = "latest"
 packer = "latest"
+pipx = "latest"
+prettier = "latest"
 yamlfmt = "latest"
