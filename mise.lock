@@ -34,6 +34,11 @@ checksum = "sha256:71449da0187a957233e1cf08565ed3c85fe67cd8d5942a15bc231579e1c7e
 url = "https://github.com/jdx/hk/releases/download/v1.57.0/hk-x86_64-unknown-linux-gnu.tar.gz"
 url_api = "https://api.github.com/repos/jdx/hk/releases/assets/536864279"
 
+[[tools."npm:pin-github-action"]]
+version = "3.5.2"
+backend = "npm:pin-github-action"
+specifiers = ["latest"]
+
 [[tools.packer]]
 version = "1.16.1"
 backend = "aqua:hashicorp/packer"

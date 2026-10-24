@@ -18,5 +18,6 @@ github_attestations = true
 actionlint = "latest"
 betterleaks = "latest"
 hk = "latest"
+"npm:pin-github-action" = "latest"
 packer = "latest"
 yamlfmt = "latest"
