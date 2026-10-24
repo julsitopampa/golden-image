@@ -80,6 +80,10 @@ jobs:
       - name: Install Ansible Galaxy dependencies
         run: |
           ansible-galaxy role install -r ansible/requirements.yml -p ansible/roles
+<<<<<<< HEAD
+=======
+          ansible-galaxy collection install -r ansible/requirements.yml
+>>>>>>> f7a7143 (debug: ansible collection list)
           ansible-galaxy collection list
 
       - name: Build images
