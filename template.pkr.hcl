@@ -42,7 +42,6 @@ source "proxmox-iso" "debian" {
     " interface=auto",
     " netcfg/get_hostname=debian-golden",
     " netcfg/get_domain=localdomain",
-    " DEBIAN_FRONTEND=text",
 
     # <ctrl-x> or <F10> boots the modified entry.
     "<leftCtrlOn>x<leftCtrlOff>"
@@ -133,6 +132,7 @@ build {
     user          = "provisioner"
     use_proxy     = false
     extra_arguments = [
+      "-vvvv",
       "--tags", "level1-server",
       "--extra-vars", "ansible_ssh_pass=${build.Password} ansible_become_pass=${build.Password}"
     ]
