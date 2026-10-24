@@ -67,6 +67,16 @@ jobs:
       - name: Initialize Packer
         run: packer init .
 
+      - name: Setup Python
+        uses: actions/setup-python@latest
+        with:
+          python-version: '3.12'
+
+      - name: Install Ansible
+        run: |
+          pip install \
+            "ansible-core==2.21.5"
+
       - name: Install Ansible Galaxy dependencies
         run: |
           ansible-galaxy role install -r ansible/requirements.yml -p ansible/roles
