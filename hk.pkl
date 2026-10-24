@@ -16,6 +16,10 @@ local linters = new Mapping<String, Step> {
     }
     ["actionlint"] = Builtins.actionlint
     ["yamlfmt"] = Builtins.yamlfmt
+    ["pin-github-actions"] {
+        glob = List("*.github/workflows/*.yaml")
+        fix = "pin-github-action --recursive .github/workflows/"
+    }
 }
 
 hooks {
