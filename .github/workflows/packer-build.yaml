@@ -1,6 +1,7 @@
 name: Packer Build
 
 on:
+  workflow_dispatch:
   push:
     branches: [main]
     paths:
@@ -10,9 +11,11 @@ on:
       - "ansible/**"
       - ".github/workflows/*"
   pull_request:
+    types: [opened, synchronize, reopened, labeled]
     branches: [main]
     paths:
       - "**.pkr.hcl"
+      - "**.pkrvars.hcl"
       - "http/**"
       - "ansible/**"
       - ".github/workflows/*"
@@ -54,7 +57,11 @@ jobs:
     runs-on: self-hosted-arc
     environment: prod
     needs: validate
-    if: github.ref == 'refs/heads/main'
+    if: |
+      github.ref == 'refs/heads/main' ||
+      github.event_name == 'workflow_dispatch' ||
+      contains(github.event.pull_request.labels.*.name, 'test-build')
+
     steps:
       - name: Checkout code
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
