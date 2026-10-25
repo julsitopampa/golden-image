@@ -13,12 +13,6 @@ on:
   pull_request:
     types: [opened, synchronize, reopened, labeled]
     branches: [main]
-    paths:
-      - "**.pkr.hcl"
-      - "**.pkrvars.hcl"
-      - "http/**"
-      - "ansible/**"
-      - ".github/workflows/*"
 
 concurrency:
   group: ${{ github.workflow }}
